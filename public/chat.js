@@ -34,6 +34,7 @@ var Chat = Chat || {
   exec_login: function(){
     var id = $("#login_id").val();
     var password = $("#login_password").val();
+    $.cookie("login_id", id, { expires: 360});
     this.client.login({
       id: id,
       password: password,
@@ -252,5 +253,6 @@ var Chat = Chat || {
 $(document).ready(function(){
   Chat.set_form_action();
   Chat.set_color_form($.cookie("color"));
+  $("#login_id").val($.cookie("login_id"));
   Chat.init();
 });
