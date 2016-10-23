@@ -1,0 +1,54 @@
+body {
+  padding: 5px;
+}
+
+.row {
+  margin: 5px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0 0 0 1em;
+  padding: 0;
+}
+
+.member_login {
+  color: #000000;
+  font-weight: 500;
+}
+
+.member_logout {
+  color: #888888;
+}
+
+.delay_none {
+}
+
+.delay_good {
+  color: #00ff7f;
+  font-size: large;
+}
+
+.delay_little {
+  color: #ffd700;
+  font-size: large;
+}
+
+.delay_much {
+  color: #f90000;
+  font-size: large;
+}
+
+.color_select_color {
+  margin: 2px;
+  font-size: large;
+  cursor: pointer;
+}
+
+.color_select_color:hover {
+  background: #333333;
+}
+
+.selected {
+  background: #333333;
+}
