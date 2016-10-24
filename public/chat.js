@@ -16,12 +16,6 @@ var Chat = Chat || {
       });
   },
 
-  logout_to_login: function(){
-    Chat.login = true;
-    $("#login").show();
-    $("#logout").hide();
-  },
-
   login_to_logout: function(){
     Chat.login = false;
     $("#chat_body_ul").empty();
@@ -39,6 +33,7 @@ var Chat = Chat || {
     })
       .done(function(data){
         if(data.result){
+          Chat.login = true;
           Chat.init();
         }else{
           $("#login_form_message").text("ログインに失敗しました");
@@ -58,14 +53,13 @@ var Chat = Chat || {
       latest_id: Chat.latest_id
     })
       .done(function(data){
-        window.debug = data;
         var ul = $("#chat_body_ul");
         if(data.messages.length > 0){
           Chat.latest_id = data.messages[0].id;
+          Chat.write_messages(data.messages.reverse(), true);
+          Chat.set_title(data.messages.reverse());
         }
-        Chat.write_messages(data.messages.reverse(), true);
         Chat.write_members(data.members);
-        Chat.set_title(data.messages.reverse());
       })
       .always(function(data){
         if(Chat.login){
