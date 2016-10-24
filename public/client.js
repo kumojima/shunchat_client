@@ -118,6 +118,8 @@ var Client = Client || {
    * obj.data: POSTパラメータ
    */
   post_proxy: function(obj){
+    var date = new Date().toLocaleString();
+    var api_status = $("#api_status");
     return $.post({
       url: "/proxy",
       data: {
@@ -128,11 +130,23 @@ var Client = Client || {
       dataType: "json",
     })
       .done(function(data){
+        var icon = $("<span></span>", { addClass: "glyphicon glyphicon-check text-success" });
+        var message = " [OK] " + obj.path + " (" + date + ")";
+        api_status.empty();
+        api_status.append(icon);
+        api_status.append(message);
         if(!data.login){
           Chat.login_to_logout();
           return Promise.reject(data);
         }
         return Promise.resolve(data);
+      })
+      .fail(function(data){
+        var icon = $("<span></span>", { addClass: "glyphicon glyphicon-ban-circle text-danger" });
+        var message = " [NG] " + obj.path + " (" + date + ")";
+        api_status.empty();
+        api_status.append(icon);
+        api_status.append(message);
       });
   }
 }
