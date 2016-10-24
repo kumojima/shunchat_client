@@ -107,7 +107,8 @@ var Client = Client || {
   get_page_title: function(obj){
     return $.get({
       url: "/page_title",
-      data: { url: obj.url }
+      data: { url: obj.url },
+      dataType: "json"
     });
   },
 
