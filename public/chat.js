@@ -66,6 +66,8 @@ var Chat = Chat || {
         Chat.write_messages(data.messages.reverse(), true);
         Chat.write_members(data.members);
         Chat.set_title(data.messages.reverse());
+      })
+      .always(function(data){
         if(Chat.login){
           Chat.load_latest();
         }
