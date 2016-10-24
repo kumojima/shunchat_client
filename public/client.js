@@ -135,6 +135,7 @@ var Client = Client || {
         api_status.empty();
         api_status.append(icon);
         api_status.append(message);
+        api_status.effect("highlight", {}, 1500);
         if(!data.login){
           Chat.login_to_logout();
           return Promise.reject(data);
@@ -147,6 +148,7 @@ var Client = Client || {
         api_status.empty();
         api_status.append(icon);
         api_status.append(message);
+        api_status.effect("highlight", { color: "#d9534f" }, 1500);
       });
   }
 }
