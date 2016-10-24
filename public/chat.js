@@ -55,7 +55,7 @@ var Chat = Chat || {
 
   load_latest: function(){
     Chat.client.load_latest({
-      latest_id: this.latest_id
+      latest_id: Chat.latest_id
     })
       .done(function(data){
         window.debug = data;
