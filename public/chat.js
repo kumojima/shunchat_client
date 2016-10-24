@@ -69,7 +69,7 @@ var Chat = Chat || {
       })
       .always(function(data){
         if(Chat.login){
-          Chat.load_latest();
+          setTimeout(Chat.load_latest, 5000);
         }
       });
   },
