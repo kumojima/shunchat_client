@@ -6,16 +6,14 @@ var Chat = Chat || {
   init: function(){
     $("#login").show();
     $("#logout").hide();
-    this.client.load_init({
-      success: function(data){
-        window.debug = data;
+    this.client.load_init()
+      .done(function(data){
         Chat.latest_id = data.messages[0].id;
         Chat.write_messages(data.messages);
         Chat.write_members(data.members);
         Chat.set_title(data.messages);
         Chat.load_latest();
-      }
-    });
+      });
   },
 
   logout_to_login: function(){
@@ -37,29 +35,29 @@ var Chat = Chat || {
     $.cookie("login_id", id, { expires: 360});
     this.client.login({
       id: id,
-      password: password,
-      success: function(data){
+      password: password
+    })
+      .done(function(data){
         if(data.result){
           Chat.init();
         }else{
           $("#login_form_message").text("ログインに失敗しました");
         }
-      }
-    });
+      });
   },
 
   exec_logout: function(){
-    this.client.logout({
-      success: function(data){
+    this.client.logout()
+      .done(function(data){
         Chat.login_to_logout();
-      }
-    });
+      });
   },
 
   load_latest: function(){
-    this.client.load_latest({
-      latest_id: this.latest_id,
-      success: function(data){
+    Chat.client.load_latest({
+      latest_id: this.latest_id
+    })
+      .done(function(data){
         window.debug = data;
         var ul = $("#chat_body_ul");
         if(data.messages.length > 0){
@@ -71,8 +69,7 @@ var Chat = Chat || {
         if(Chat.login){
           Chat.load_latest();
         }
-      }
-    });
+      });
   },
 
   /*
@@ -101,11 +98,11 @@ var Chat = Chat || {
         span.append(favicon);
         span.append(a);
         Chat.client.get_page_title({
-          url: url,
-          success: function(data){
+          url: url
+        })
+          .done(function(data){
             a.text(data.result);
-          }
-        });
+          });
       }
     });
     return span;
@@ -166,16 +163,14 @@ var Chat = Chat || {
     $("#message").val("");
     this.client.create_message({
       color: this.color,
-      message: message,
-      success: function(){}
+      message: message
     });
   },
 
   change_status: function(){
     var new_status = $("#status").val();
     this.client.change_status({
-      status: new_status,
-      success: function(){}
+      status: new_status
     });
   },
 
@@ -184,15 +179,12 @@ var Chat = Chat || {
     if(judge.length <= 0){ return; }
     $("#judge").val("");
     this.client.create_judge({
-      message: judge,
-      success: function(){}
+      message: judge
     });
   },
 
   create_auto: function(){
-    this.client.create_auto({
-      success: function(){}
-    });
+    this.client.create_auto();
   },
 
   set_form_action: function(){
