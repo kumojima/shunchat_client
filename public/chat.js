@@ -56,7 +56,7 @@ var Chat = Chat || {
         var ul = $("#chat_body_ul");
         if(data.messages.length > 0){
           Chat.latest_id = data.messages[0].id;
-          Chat.write_messages(data.messages.reverse(), true);
+          Chat.write_messages(data.messages, true);
           Chat.set_title(data.messages.reverse());
         }
         Chat.write_members(data.members);
