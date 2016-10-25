@@ -18,6 +18,7 @@ var Chat = Chat || {
 
   login_to_logout: function(){
     Chat.login = false;
+    document.title = "chat";
     $("#chat_body_ul").empty();
     $("#login").hide();
     $("#logout").show();
