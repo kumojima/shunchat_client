@@ -141,17 +141,34 @@ var Chat = Chat || {
     ul.empty();
     members.forEach(function(member){
       var li = $("<li></li>",{
-        addClass: member.login == "login" ? "member_login" : "member_logout"
+        addClass: "list-group-item " + Chat.member_status_class(member.delay)
       });
-      var icon = member.login == "login" ? "■" : "▽";
-      var delay = $("<span></span>", { addClass: "delay_" + member.delay });
-      delay.text(icon);
-      var name = $("<span></span>");
-      name.text(member.name + (member.status ? "@" + member.status : ""));
-      li.append(delay);
+      var name = $("<h4></h4>", { addClass: "list-group-item-heading" });
+      name.text(member.name);
+      var member_status = $("<p></p>", { addClass: "list-item-group-text" });
+      if(member.status){
+        member_status.text("@" + member.status);
+      }
       li.append(name);
+      li.append(member_status);
       ul.append(li);
     });
+  },
+
+  member_status_class: function(delay_status){
+    switch(delay_status){
+      case "good":
+        return "list-group-item-success";
+        break;
+      case "little":
+        return "list-group-item-warning";
+        break;
+      case "much":
+        return "list-group-item-danger";
+        break;
+      default:
+        return "disabled";
+    }
   },
 
   create_message: function(){

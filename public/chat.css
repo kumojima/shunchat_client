@@ -21,24 +21,6 @@ ul {
   color: #888888;
 }
 
-.delay_none {
-}
-
-.delay_good {
-  color: #00ff7f;
-  font-size: large;
-}
-
-.delay_little {
-  color: #ffd700;
-  font-size: large;
-}
-
-.delay_much {
-  color: #f90000;
-  font-size: large;
-}
-
 .color_select_color {
   margin: 2px;
   font-size: large;
