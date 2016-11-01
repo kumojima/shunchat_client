@@ -77,8 +77,8 @@ var Chat = Chat || {
     var regexp = /https?:\/\/[^\s]*/g;
     var urls = obj.content.match(regexp);
     var texts = obj.content.split(regexp);
-    var span = $("<span></span>");
-    span.append("(" + obj.date + ")" + obj.name + "-->");
+    var span = $("<span></span>", {css : { color: obj.color}});
+    span.append(obj.name + "-->");
     if(!texts){ return span; }
     texts.forEach(function(text, i){
       span.append(text);
@@ -113,10 +113,9 @@ var Chat = Chat || {
   write_messages: function(messages, prev){
     var ul = $("#chat_body_ul");
     messages.forEach(function(obj){
-      var li = $("<li></li>", {
-        css: { color: obj.color }
-      });
-      li.html(Chat.format_message(obj));
+      var li = $("<li></li>");
+      li.append("(" + obj.date + ")");
+      li.append(Chat.format_message(obj));
       prev ? ul.prepend(li) : ul.append(li);
     });
   },
