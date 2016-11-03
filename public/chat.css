@@ -34,3 +34,8 @@ ul {
 .selected {
   background: #333333;
 }
+
+.quote_button {
+  color: #3c763d;
+  cursor: pointer;
+}

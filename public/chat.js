@@ -72,16 +72,30 @@ var Chat = Chat || {
   /*
    * 発言整形
    * obj: レスポンスのmessageオブジェクト
+   * <li>
+   *   [buttons]
+   *   <span>
+   *     (datetime)
+   *     <span>Message</span>
+   *   </span>
+   * </li>
    */
   format_message: function(obj){
     var regexp = /https?:\/\/[^\s]*/g;
     var urls = obj.content.match(regexp);
     var texts = obj.content.split(regexp);
     var li = $("<li></li>");
-    li.append("(" + obj.date + ")");
+    var icon = $("<span></span>", {
+      addClass: "glyphicon glyphicon-share-alt quote_button",
+      on: { click: Chat.quote }
+    });
+    li.append(icon);
+    var cover_span = $("<span></span>");
+    li.append(cover_span);
+    cover_span.append("(" + obj.date + ")");
     var span = $("<span></span>", {css : { color: obj.color}});
     span.append(obj.name + "-->");
-    li.append(span);
+    cover_span.append(span);
     if(!texts){ return li; }
     texts.forEach(function(text, i){
       span.append(text);
@@ -253,6 +267,12 @@ var Chat = Chat || {
   set_color: function(color){
     this.color = color;
     $.cookie("color", color, { expires: 360 });
+  },
+
+  quote: function(){
+    var input = $("#message");
+    input.val(input.val() + $(this).next().text());
+    input.focus();
   }
 }
 
