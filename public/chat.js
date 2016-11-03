@@ -77,9 +77,12 @@ var Chat = Chat || {
     var regexp = /https?:\/\/[^\s]*/g;
     var urls = obj.content.match(regexp);
     var texts = obj.content.split(regexp);
+    var li = $("<li></li>");
+    li.append("(" + obj.date + ")");
     var span = $("<span></span>", {css : { color: obj.color}});
     span.append(obj.name + "-->");
-    if(!texts){ return span; }
+    li.append(span);
+    if(!texts){ return li; }
     texts.forEach(function(text, i){
       span.append(text);
       if(urls && urls[i]){
@@ -102,7 +105,7 @@ var Chat = Chat || {
           });
       }
     });
-    return span;
+    return li;
   },
 
   /*
@@ -113,9 +116,7 @@ var Chat = Chat || {
   write_messages: function(messages, prev){
     var ul = $("#chat_body_ul");
     messages.forEach(function(obj){
-      var li = $("<li></li>");
-      li.append("(" + obj.date + ")");
-      li.append(Chat.format_message(obj));
+      var li = Chat.format_message(obj);
       prev ? ul.prepend(li) : ul.append(li);
     });
   },
