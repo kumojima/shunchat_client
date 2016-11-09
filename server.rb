@@ -1,9 +1,9 @@
 require "sinatra"
 require "httpclient"
 
-def http_client(cookie: nil)
+def http_client(cookies: [])
   client = HTTPClient.new
-  if cookie
+  cookies.each do |cookie|
     c = WebAgent::Cookie.new
     c.name = cookie[:name]
     c.value = cookie[:value]
@@ -19,11 +19,18 @@ end
 
 post "/proxy" do
   client = http_client(
-    cookie: {
-      name: "chat_session",
-      value: request.cookies["chat_session"],
-      url: "http://chat.shun256.com/"
-    }
+    cookies: [
+      {
+        name: "chat_session",
+        value: request.cookies["chat_session"],
+        url: "http://chat.shun256.com/"
+      },
+      {
+        name: "session",
+        value: request.cookies["session"],
+        url: "http://chat.shun256.com/"
+      },
+    ]
     )
   url = File.join("http://chat.shun256.com/", params["path"])
   if params["method"] == "get"

@@ -1,6 +1,4 @@
 var Client = Client || {
-  color: "808000",
-
   /*
    * ログイン
    * obj.id: メールアドレス
@@ -10,9 +8,9 @@ var Client = Client || {
     return $.post({
       url: "/proxy",
       data: {
-        path: "/login",
+        path: "/auth",
         method: "post",
-        data: { name: obj.id, pass: obj.password }
+        data: { command: "login", mail: obj.id, pass: obj.password }
       },
       dataType: "json"
     });
@@ -23,9 +21,20 @@ var Client = Client || {
    */
   logout: function(){
     return this.post_proxy({
-      path: "/logout",
+      path: "/auth",
       method: "post",
-      data: {}
+      data: { command: "logout" }
+    });
+  },
+
+  /*
+   * 入室
+   */
+  enter_room: function(){
+    return this.post_proxy({
+      path: "/chat",
+      method: "post",
+      data: { target: "room", command: "enter" }
     });
   },
 
@@ -34,21 +43,43 @@ var Client = Client || {
    */
   load_init: function(obj){
     return this.post_proxy({
-      path: "/load",
+      path: "/chat",
       method: "post",
-      data: { type: "last" }
+      data: { target: "message", command: "load", reverse: true }
     });
   },
 
   /*
    * 最新発言読み込み
    * obj.latest_id: 最新ID
+   * obj.type: チャット識別子
    */
   load_latest: function(obj){
     return this.post_proxy({
-      path: "/load",
+      path: "/chat",
       method: "post",
-      data: { type: "latest", id: obj.latest_id }
+      data: {
+        target: "message",
+        command: "load",
+        chat_id_more: obj.type,
+        message_id_more: obj.latest_id,
+        wait: true,
+        timeout: 5
+      }
+    });
+  },
+
+  /*
+   * メンバー読み込み
+   */
+  load_member: function(){
+    return this.post_proxy({
+      path: "/chat",
+      method: "post",
+      data: {
+        target: "member",
+        command: "load"
+      }
     });
   },
 
@@ -59,9 +90,9 @@ var Client = Client || {
    */
   create_message: function(obj){
     return this.post_proxy({
-      path: "/post",
+      path: "/chat",
       method: "post",
-      data: { color: obj.color, message: obj.message }
+      data: { target: "message", command: "post", color: obj.color, content: obj.message }
     });
   },
 
@@ -71,9 +102,9 @@ var Client = Client || {
    */
   change_status: function(obj){
     return this.post_proxy({
-      path: "/post",
+      path: "/chat",
       method: "post",
-      data: { type: "status", message: obj.status }
+      data: { target: "member", command: "post", content: obj.status }
     });
   },
 
@@ -83,9 +114,9 @@ var Client = Client || {
    */
   create_judge: function(obj){
     return this.post_proxy({
-      path: "/post",
+      path: "/chat",
       method: "post",
-      data: { type: "judge", message: obj.message }
+      data: { target: "message", command: "judge", content: obj.message }
     });
   },
 
@@ -94,9 +125,9 @@ var Client = Client || {
    */
   create_auto: function(){
     return this.post_proxy({
-      path: "/post",
+      path: "/chat",
       method: "post",
-      data: { type: "auto" }
+      data: { target: "message", command: "auto" }
     });
   },
 
@@ -130,7 +161,7 @@ var Client = Client || {
       },
       dataType: "json",
     })
-      .done(function(data){
+      .then(function(data){
         var icon = $("<span></span>", { addClass: "glyphicon glyphicon-check text-success" });
         var message = " [OK] " + obj.path + " (" + date + ")";
         api_status.empty();
@@ -139,6 +170,13 @@ var Client = Client || {
         api_status.effect("highlight", {}, 1500);
         if(!data.login){
           Chat.login_to_logout();
+          return Promise.reject(data);
+        }
+        if(!data.success){
+          return Promise.reject(data);
+        }
+        if(!data.inroom){
+          Client.enter_room();
           return Promise.reject(data);
         }
         return Promise.resolve(data);
@@ -150,6 +188,7 @@ var Client = Client || {
         api_status.append(icon);
         api_status.append(message);
         api_status.effect("highlight", { color: "#d9534f" }, 1500);
+        return Promise.reject(data);
       });
   }
 }
