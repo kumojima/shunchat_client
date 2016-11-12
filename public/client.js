@@ -64,7 +64,8 @@ var Client = Client || {
         chat_id_more: obj.type,
         message_id_more: obj.latest_id,
         wait: true,
-        timeout: 5
+        timeout: 5,
+        reverse: true
       }
     });
   },
