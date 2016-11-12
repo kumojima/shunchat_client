@@ -51,7 +51,9 @@ get "/page_title" do
   end
   client = http_client
   res = client.get(url)
-  reg = /<title.*?>(.*?)<\/title>/.match(res.body)
+  reg = /<title.*?>(.*?)<\/title>/.match(
+    res.body.encode("UTF-8", "UTF-8", replace: "?")
+  )
   title = reg&.captures&.first || url
   { result: title }.to_json
 end
