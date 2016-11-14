@@ -1,3 +1,80 @@
+var Message = function(data){
+  var self = this;
+
+  self.name = data.name;
+  self.message = ko.observable(data.message_content);
+  self.posted_at = "(" + data.posted_at + ")";
+  self.message_color = data.message_color;
+
+  self.quote = function(){
+    var input = $("#message");
+    input.val(input.val() + self.posted_at + self.name + "-->" + $("<span>" + self.message() + "</span>").text());
+    input.focus();
+  };
+
+  self.replace_url(data.message_content);
+}
+
+Message.prototype.replace_url = function(message){
+  var self = this;
+  var regexp = /https?:\/\/[^\s]*/g;
+  var urls = message.match(regexp);
+  var texts = message.split(regexp);
+  var span = $("<span></span>");
+  if(!texts){ return; }
+  texts.forEach(function(text, i){
+    span.append(text);
+    if(urls && urls[i]){
+      var url = urls[i];
+      var favicon = $("<img>", {
+        src: "http://favicon.hatena.ne.jp/?url=" + url
+      });
+      var a = $("<a></a>", {
+        href: url,
+        target: "_blank"
+      });
+      a.text(url);
+      span.append(favicon);
+      span.append(a);
+      Chat.client.get_page_title({
+        url: url
+      })
+        .done(function(data){
+          a.text(data.result);
+          self.message(span.html());
+        });
+    }
+  });
+  self.message(span.html());
+};
+
+var Member = function(data){
+  var self = this;
+
+  self.name = data.name;
+  self.status = data.state ? "@" + data.state : "";
+  self.member_style = self.member_status_class(data);
+};
+
+Member.prototype.member_status_class = function(member){
+  if(!member.inroom){
+    return "disabled";
+  }else if(member.delay < 60){
+    return "list-group-item-success";
+  }else if(member.delay < 300){
+    return "list-group-item-warning";
+  }else{
+    return "list-group-item-danger";
+  }
+};
+
+var viewModel = function(){
+  var self = this;
+
+  self.messages = ko.observableArray([]);
+  self.members = ko.observableArray([]);
+}
+
 var Chat = Chat || {
   client: Client,
   latest_id: null,
@@ -5,6 +82,7 @@ var Chat = Chat || {
   login: true,
   color: "000000",
   load_member_timer: null,
+  view_model: null,
 
   init: function(){
     $("#login").show();
@@ -93,68 +171,14 @@ var Chat = Chat || {
   },
 
   /*
-   * 発言整形
-   * obj: レスポンスのlistオブジェクトの要素
-   * <li>
-   *   [buttons]
-   *   <span>
-   *     (datetime)
-   *     <span>Message</span>
-   *   </span>
-   * </li>
-   */
-  format_message: function(obj){
-    var regexp = /https?:\/\/[^\s]*/g;
-    var urls = obj.message_content.match(regexp);
-    var texts = obj.message_content.split(regexp);
-    var li = $("<li></li>");
-    var icon = $("<span></span>", {
-      addClass: "glyphicon glyphicon-share-alt quote_button",
-      on: { click: Chat.quote }
-    });
-    li.append(icon);
-    var cover_span = $("<span></span>");
-    li.append(cover_span);
-    cover_span.append("(" + obj.posted_at + ")");
-    var span = $("<span></span>", {css : { color: obj.message_color}});
-    span.append(obj.name + "-->");
-    cover_span.append(span);
-    if(!texts){ return li; }
-    texts.forEach(function(text, i){
-      span.append(text);
-      if(urls && urls[i]){
-        var url = urls[i];
-        var favicon = $("<img>", {
-          src: "http://favicon.hatena.ne.jp/?url=" + url
-        });
-        var a = $("<a></a>", {
-          href: url,
-          target: "_blank"
-        });
-        a.text(url);
-        span.append(favicon);
-        span.append(a);
-        Chat.client.get_page_title({
-          url: url
-        })
-          .done(function(data){
-            a.text(data.result);
-          });
-      }
-    });
-    return li;
-  },
-
-  /*
    * 発言書き出し
    * messages: レスポンスのlistオブジェクト
    * prev: trueならprepend, falseならappend(デフォルト)
    */
   write_messages: function(messages, prev){
-    var ul = $("#chat_body_ul");
     messages.forEach(function(obj){
-      var li = Chat.format_message(obj);
-      prev ? ul.prepend(li) : ul.append(li);
+      var message = new Message(obj);
+      prev ? Chat.view_model.messages.unshift(message) : Chat.view_model.messages.push(message);
     });
   },
 
@@ -174,34 +198,11 @@ var Chat = Chat || {
    * members: レスポンスのlistオブジェクト
    */
   write_members: function(members){
-    var ul = $("#members_ul");
-    ul.empty();
-    members.forEach(function(member){
-      var li = $("<li></li>",{
-        addClass: "list-group-item " + Chat.member_status_class(member)
-      });
-      var name = $("<h4></h4>", { addClass: "list-group-item-heading" });
-      name.text(member.name);
-      var member_status = $("<p></p>", { addClass: "list-item-group-text" });
-      if(member.state){
-        member_status.text("@" + member.state);
-      }
-      li.append(name);
-      li.append(member_status);
-      ul.append(li);
+    Chat.view_model.members.removeAll();
+    members.forEach(function(obj){
+      var member = new Member(obj);
+      Chat.view_model.members.push(member);
     });
-  },
-
-  member_status_class: function(member){
-    if(!member.inroom){
-      return "disabled";
-    }else if(member.delay < 60){
-      return "list-group-item-success";
-    }else if(member.delay < 300){
-      return "list-group-item-warning";
-    }else{
-      return "list-group-item-danger";
-    }
   },
 
   create_message: function(){
@@ -296,6 +297,9 @@ var Chat = Chat || {
 }
 
 $(document).ready(function(){
+  var vm = new viewModel();
+  ko.applyBindings(vm);
+  Chat.view_model = vm;
   Chat.set_form_action();
   Chat.set_color_form($.cookie("color"));
   $("#login_id").val($.cookie("login_id"));
