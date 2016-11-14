@@ -78,14 +78,20 @@
         </div>
         <div class="row">
           <div class="col-md-9">
-            <ul data-bind="foreach: messages">
+            <ul data-bind="foreach: { data: messages, as: 'message' }">
               <li>
-                <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: quote"></span>
-                <span data-bind="text: posted_at"></span>
-                <span data-bind="style: { color: message_color }">
-                  <span data-bind="text: name"></span>
+                <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: message.quote"></span>
+                <span data-bind="text: message.posted_at"></span>
+                <span data-bind="style: { color: message.message_color }">
+                  <span data-bind="text: message.name"></span>
                   --&gt;
-                  <span data-bind="html: message"></span>
+                  <span data-bind="foreach: { data:message.message_pieces, as: 'piece' }">
+                    <span data-bind="text: piece.message"></span>
+                    <a data-bind="attr: piece.a_attrs, visible: piece.url">
+                      <img data-bind="attr: piece.img_attrs" />
+                      <span data-bind="text: piece.title"></span>
+                    </a>
+                  </span>
                 </span>
               </li>
             </ul>

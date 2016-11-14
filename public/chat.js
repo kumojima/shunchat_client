@@ -1,51 +1,56 @@
 var Message = function(data){
   var self = this;
+  var regexp = /https?:\/\/[^\s]*/g;
+  var urls = data.message_content.match(regexp);
+  var texts = data.message_content.split(regexp) || [];
 
   self.name = data.name;
-  self.message = ko.observable(data.message_content);
+  self.message_pieces = ko.observableArray([]);
   self.posted_at = "(" + data.posted_at + ")";
   self.message_color = data.message_color;
 
+  texts.forEach(function(text, i){
+    var url = "";
+    if(urls && urls[i]){
+      url = urls[i];
+    }
+    self.message_pieces.push(new MessagePiece({ message: text, url: url }));
+  });
+
   self.quote = function(){
     var input = $("#message");
-    input.val(input.val() + self.posted_at + self.name + "-->" + $("<span>" + self.message() + "</span>").text());
+    var result = input.val() + self.posted_at + self.name + "-->";
+    self.message_pieces().forEach(function(i){
+      result += i.message;
+      result += i.title();
+    });
+    input.val(result);
     input.focus();
   };
-
-  self.replace_url(data.message_content);
 }
 
-Message.prototype.replace_url = function(message){
+var MessagePiece = function(piece){
   var self = this;
-  var regexp = /https?:\/\/[^\s]*/g;
-  var urls = message.match(regexp);
-  var texts = message.split(regexp);
-  var span = $("<span></span>");
-  if(!texts){ return; }
-  texts.forEach(function(text, i){
-    span.append(text);
-    if(urls && urls[i]){
-      var url = urls[i];
-      var favicon = $("<img>", {
-        src: "http://favicon.hatena.ne.jp/?url=" + url
+  self.message = piece.message;
+  self.url = self.is_url(piece.url);
+  self.title = ko.observable(piece.url);
+  if(self.url){
+    self.a_attrs = { href: piece.url };
+    self.img_attrs = { src: "http://favicon.hatena.ne.jp/?url=" + piece.url };
+    Chat.client.get_page_title({
+      url: piece.url
+    })
+      .done(function(data){
+        self.title(data.result);
       });
-      var a = $("<a></a>", {
-        href: url,
-        target: "_blank"
-      });
-      a.text(url);
-      span.append(favicon);
-      span.append(a);
-      Chat.client.get_page_title({
-        url: url
-      })
-        .done(function(data){
-          a.text(data.result);
-          self.message(span.html());
-        });
-    }
-  });
-  self.message(span.html());
+  }else{
+    self.a_attrs = {};
+    self.img_attrs = {};
+  }
+};
+
+MessagePiece.prototype.is_url = function(message){
+  return message.substr(0, 4) == "http";
 };
 
 var Member = function(data){
