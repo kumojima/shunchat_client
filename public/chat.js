@@ -9,6 +9,7 @@ var Chat = function(){
   self.type = null;
   self.color = "000000";
   self.load_member_timer = null;
+
 };
 
 Chat.prototype.init = function(){
@@ -177,36 +178,7 @@ Chat.prototype.create_judge = function(){
 };
 
 Chat.prototype.create_auto = function(){
-  this.client.create_auto();
-};
-
-Chat.prototype.set_form_action = function(){
-  var self = this;
-
-  $("#login_form").submit(function(){
-    self.exec_login();
-    return false;
-  });
-  $("#message_form").submit(function(){
-    self.create_message();
-    return false;
-  });
-  $("#status_form").submit(function(){
-    self.change_status();
-    return false;
-  });
-  $("#judge_form").submit(function(){
-    self.create_judge();
-    return false;
-  });
-  $("#auto_form").submit(function(){
-    self.create_auto();
-    return false;
-  });
-  $("#logout_form").submit(function(){
-    self.exec_logout();
-    return false;
-  });
+  Client.create_auto();
 };
 
 Chat.prototype.set_color_form = function(current_color){
@@ -237,7 +209,6 @@ Chat.prototype.set_color_form = function(current_color){
 $(document).ready(function(){
   chat = new Chat();
   ko.applyBindings(chat);
-  chat.set_form_action();
   chat.set_color_form($.cookie("color"));
   $("#login_id").val($.cookie("login_id"));
   chat.init();
