@@ -78,20 +78,18 @@ var viewModel = function(){
 
   self.messages = ko.observableArray([]);
   self.members = ko.observableArray([]);
+  self.login = ko.observable(true);
 }
 
 var Chat = Chat || {
   client: Client,
   latest_id: null,
   type: null,
-  login: true,
   color: "000000",
   load_member_timer: null,
   view_model: null,
 
   init: function(){
-    $("#login").show();
-    $("#logout").hide();
     this.client.enter_room()
       .done(function(){
         Chat.load_init();
@@ -112,14 +110,11 @@ var Chat = Chat || {
   },
 
   login_to_logout: function(){
-    Chat.login = false;
     document.title = "chat";
     if(Chat.load_member_timer){
       clearInterval(Chat.load_member_timer);
     }
     $("#chat_body_ul").empty();
-    $("#login").hide();
-    $("#logout").show();
   },
 
   exec_login: function(){
@@ -132,7 +127,7 @@ var Chat = Chat || {
     })
       .done(function(data){
         if(data.success){
-          Chat.login = true;
+          Chat.view_model.login(true);
           Chat.init();
         }else{
           $("#login_form_message").text("ログインに失敗しました");
@@ -169,7 +164,7 @@ var Chat = Chat || {
         }
       })
       .always(function(data){
-        if(Chat.login){
+        if(Chat.view_model.login()){
           setTimeout(Chat.load_latest, 5000);
         }
       });
