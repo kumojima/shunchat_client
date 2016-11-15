@@ -21,11 +21,6 @@ post "/proxy" do
   client = http_client(
     cookies: [
       {
-        name: "chat_session",
-        value: request.cookies["chat_session"],
-        url: "http://chat.shun256.com/"
-      },
-      {
         name: "session",
         value: request.cookies["session"],
         url: "http://chat.shun256.com/"
