@@ -1,232 +1,244 @@
-var viewModel = function(){
+var Chat = function(){
   var self = this;
 
   self.messages = ko.observableArray([]);
   self.members = ko.observableArray([]);
   self.login = ko.observable(true);
-}
 
-var Chat = Chat || {
-  client: Client,
-  latest_id: null,
-  type: null,
-  color: "000000",
-  load_member_timer: null,
-  view_model: null,
+  self.latest_id = null;
+  self.type = null;
+  self.color = "000000";
+  self.load_member_timer = null;
+};
 
-  init: function(){
-    this.client.enter_room()
-      .done(function(){
-        Chat.load_init();
-      });
-  },
+Chat.prototype.init = function(){
+  var self = this;
 
-  load_init: function(){
-    this.client.load_init()
-      .done(function(data){
-        Chat.latest_id = data.list[0].message_id;
-        Chat.type = data.list[0].chat_id;
-        Chat.write_messages(data.list);
-        Chat.set_title(data.list);
-        Chat.load_member();
-        Chat.load_member_timer = setInterval(function(){ Chat.load_member() }, 5000);
-        Chat.load_latest();
-      });
-  },
-
-  login_to_logout: function(){
-    document.title = "chat";
-    if(Chat.load_member_timer){
-      clearInterval(Chat.load_member_timer);
-    }
-    $("#chat_body_ul").empty();
-  },
-
-  exec_login: function(){
-    var id = $("#login_id").val();
-    var password = $("#login_password").val();
-    $.cookie("login_id", id, { expires: 360});
-    this.client.login({
-      id: id,
-      password: password
-    })
-      .done(function(data){
-        if(data.success){
-          Chat.view_model.login(true);
-          Chat.init();
-        }else{
-          $("#login_form_message").text("ログインに失敗しました");
-        }
-      });
-  },
-
-  exec_logout: function(){
-    this.client.logout()
-      .done(function(data){
-        Chat.login_to_logout();
-      });
-  },
-
-  load_member: function(){
-    Chat.client.load_member()
-      .done(function(data){
-        Chat.write_members(data.list);
-      });
-  },
-
-  load_latest: function(){
-    Chat.client.load_latest({
-      latest_id: Chat.latest_id,
-      type: Chat.type
-    })
-      .done(function(data){
-        var ul = $("#chat_body_ul");
-        if(data.list.length > 0){
-          Chat.latest_id = data.list[0].message_id;
-          Chat.type = data.list[0].chat_id;
-          Chat.write_messages(data.list, true);
-          Chat.set_title(data.list.reverse());
-        }
-      })
-      .always(function(data){
-        if(Chat.view_model.login()){
-          setTimeout(Chat.load_latest, 5000);
-        }
-      });
-  },
-
-  /*
-   * 発言書き出し
-   * messages: レスポンスのlistオブジェクト
-   * prev: trueならprepend, falseならappend(デフォルト)
-   */
-  write_messages: function(messages, prev){
-    messages.forEach(function(obj){
-      var message = new Message(obj);
-      prev ? Chat.view_model.messages.unshift(message) : Chat.view_model.messages.push(message);
+  Client.enter_room()
+    .done(function(){
+      self.load_init();
     });
-  },
+};
 
-  /*
-   * titleへのセット
-   * messages: レスポンスのlistオブジェクト
-   */
-  set_title: function(messages){
-    if(messages.length <= 0){ return; }
-    var message = messages[0];
-    var title = "(" + message.name + ")" + message.message_content;
-    document.title = title;
-  },
+Chat.prototype.load_init = function(){
+  var self = this;
 
-  /*
-   * メンバー整形・書き出し
-   * members: レスポンスのlistオブジェクト
-   */
-  write_members: function(members){
-    Chat.view_model.members.removeAll();
-    members.forEach(function(obj){
-      var member = new Member(obj);
-      Chat.view_model.members.push(member);
+  Client.load_init()
+    .done(function(data){
+      self.latest_id = data.list[0].message_id;
+      self.type = data.list[0].chat_id;
+      self.write_messages(data.list);
+      self.set_title(data.list);
+      self.load_member();
+      self.load_member_timer = setInterval(function(){ self.load_member() }, 5000);
+      self.load_latest();
     });
-  },
+};
 
-  create_message: function(){
-    var message = $("#message").val();
-    if(message.length <= 0){ return; }
-    $("#message").val("");
-    this.client.create_message({
-      color: this.color,
-      message: message
-    });
-  },
+Chat.prototype.login_to_logout = function(){
+  var self = this;
 
-  change_status: function(){
-    var new_status = $("#status").val();
-    this.client.change_status({
-      status: new_status
-    });
-  },
-
-  create_judge: function(){
-    var judge = $("#judge").val();
-    if(judge.length <= 0){ return; }
-    $("#judge").val("");
-    this.client.create_judge({
-      message: judge
-    });
-  },
-
-  create_auto: function(){
-    this.client.create_auto();
-  },
-
-  set_form_action: function(){
-    $("#login_form").submit(function(){
-      Chat.exec_login();
-      return false;
-    });
-    $("#message_form").submit(function(){
-      Chat.create_message();
-      return false;
-    });
-    $("#status_form").submit(function(){
-      Chat.change_status();
-      return false;
-    });
-    $("#judge_form").submit(function(){
-      Chat.create_judge();
-      return false;
-    });
-    $("#auto_form").submit(function(){
-      Chat.create_auto();
-      return false;
-    });
-    $("#logout_form").submit(function(){
-      Chat.exec_logout();
-      return false;
-    });
-  },
-
-  set_color_form: function(current_color){
-    var div = $("#color_select");
-    var colors = ["000000", "808080", "800000", "808000", "008000", "008080", "000080", "800080", "FF00FF", "FF6600"];
-    this.color = current_color;
-    colors.forEach(function(color){
-      var span = $("<span></span>", {
-        css: { color: "#" + color },
-        addClass: "color_select_color" + (color == current_color ? " selected" : ""),
-        on: {
-          click: function(){
-            Chat.set_color(color);
-            $(this).nextAll().removeClass("selected");
-            $(this).prevAll().removeClass("selected");
-            $(this).addClass("selected");
-          }
-        }
-      });
-      span.text("■");
-      div.append(span);
-    });
-  },
-
-  set_color: function(color){
-    this.color = color;
-    $.cookie("color", color, { expires: 360 });
-  },
-
-  quote: function(){
-    var input = $("#message");
-    input.val(input.val() + $(this).next().text());
-    input.focus();
+  document.title = "chat";
+  if(self.load_member_timer){
+    clearInterval(self.load_member_timer);
+    self.load_member_timer = null;
   }
-}
+};
+
+Chat.prototype.exec_login = function(){
+  var self = this;
+
+  var id = $("#login_id").val();
+  var password = $("#login_password").val();
+  $.cookie("login_id", id, { expires: 360});
+  Client.login({
+    id: id,
+    password: password
+  })
+    .done(function(data){
+      if(data.success){
+        self.login(true);
+        self.init();
+      }else{
+        $("#login_form_message").text("ログインに失敗しました");
+      }
+    });
+};
+
+Chat.prototype.exec_logout = function(){
+  var self = this;
+
+  Client.logout()
+    .done(function(data){
+      self.login_to_logout();
+    });
+};
+
+Chat.prototype.load_member = function(){
+  var self = this;
+
+  Client.load_member()
+    .done(function(data){
+      self.write_members(data.list);
+    });
+};
+
+Chat.prototype.load_latest = function(){
+  var self = this;
+
+  Client.load_latest({
+    latest_id: self.latest_id,
+    type: self.type
+  })
+    .done(function(data){
+      var ul = $("#chat_body_ul");
+      if(data.list.length > 0){
+        self.latest_id = data.list[0].message_id;
+        self.type = data.list[0].chat_id;
+        self.write_messages(data.list, true);
+        self.set_title(data.list.reverse());
+      }
+    })
+    .always(function(data){
+      if(self.login()){
+        setTimeout(function(){ self.load_latest() }, 5000);
+      }
+    });
+};
+
+/*
+ * 発言書き出し
+ * messages: レスポンスのlistオブジェクト
+ * prev: trueならprepend, falseならappend(デフォルト)
+ */
+Chat.prototype.write_messages = function(messages, prev){
+  var self = this;
+
+  messages.forEach(function(obj){
+    var message = new Message(obj);
+    prev ? self.messages.unshift(message) : self.messages.push(message);
+  });
+};
+
+/*
+ * titleへのセット
+ * messages: レスポンスのlistオブジェクト
+ */
+Chat.prototype.set_title = function(messages){
+  var self = this;
+
+  if(messages.length <= 0){ return; }
+  var message = messages[0];
+  var title = "(" + message.name + ")" + message.message_content;
+  document.title = title;
+};
+
+/*
+ * メンバー整形・書き出し
+ * members: レスポンスのlistオブジェクト
+ */
+Chat.prototype.write_members = function(members){
+  var self = this;
+
+  self.members.removeAll();
+  members.forEach(function(obj){
+    var member = new Member(obj);
+    self.members.push(member);
+  });
+};
+
+Chat.prototype.create_message = function(){
+  var self = this;
+
+  var message = $("#message").val();
+  if(message.length <= 0){ return; }
+  $("#message").val("");
+  Client.create_message({
+    color: self.color,
+    message: message
+  });
+};
+
+Chat.prototype.change_status = function(){
+
+  var new_status = $("#status").val();
+  Client.change_status({
+    status: new_status
+  });
+};
+
+Chat.prototype.create_judge = function(){
+  var judge = $("#judge").val();
+  if(judge.length <= 0){ return; }
+  $("#judge").val("");
+  Client.create_judge({
+    message: judge
+  });
+};
+
+Chat.prototype.create_auto = function(){
+  this.client.create_auto();
+};
+
+Chat.prototype.set_form_action = function(){
+  var self = this;
+
+  $("#login_form").submit(function(){
+    self.exec_login();
+    return false;
+  });
+  $("#message_form").submit(function(){
+    self.create_message();
+    return false;
+  });
+  $("#status_form").submit(function(){
+    self.change_status();
+    return false;
+  });
+  $("#judge_form").submit(function(){
+    self.create_judge();
+    return false;
+  });
+  $("#auto_form").submit(function(){
+    self.create_auto();
+    return false;
+  });
+  $("#logout_form").submit(function(){
+    self.exec_logout();
+    return false;
+  });
+};
+
+Chat.prototype.set_color_form = function(current_color){
+  var self = this;
+
+  var div = $("#color_select");
+  var colors = ["000000", "808080", "800000", "808000", "008000", "008080", "000080", "800080", "FF00FF", "FF6600"];
+  self.color = current_color;
+  colors.forEach(function(color){
+    var span = $("<span></span>", {
+      css: { color: "#" + color },
+      addClass: "color_select_color" + (color == current_color ? " selected" : ""),
+      on: {
+        click: function(){
+          self.color = color;
+          $.cookie("color", color, { expires: 360 });
+          $(this).nextAll().removeClass("selected");
+          $(this).prevAll().removeClass("selected");
+          $(this).addClass("selected");
+        }
+      }
+    });
+    span.text("■");
+    div.append(span);
+  });
+};
 
 $(document).ready(function(){
-  var vm = new viewModel();
-  ko.applyBindings(vm);
-  Chat.view_model = vm;
-  Chat.set_form_action();
-  Chat.set_color_form($.cookie("color"));
+  chat = new Chat();
+  ko.applyBindings(chat);
+  chat.set_form_action();
+  chat.set_color_form($.cookie("color"));
   $("#login_id").val($.cookie("login_id"));
-  Chat.init();
+  chat.init();
 });

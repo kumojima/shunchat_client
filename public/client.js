@@ -170,7 +170,7 @@ var Client = Client || {
         api_status.append(message);
         api_status.effect("highlight", {}, 1500);
         if(!data.login){
-          Chat.view_model.login(false);
+          chat.login(false);
           return Promise.reject(data);
         }
         if(!data.success){

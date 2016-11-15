@@ -6,7 +6,7 @@ var MessagePiece = function(piece){
   if(self.url){
     self.a_attrs = { href: piece.url };
     self.img_attrs = { src: "http://favicon.hatena.ne.jp/?url=" + piece.url };
-    Chat.client.get_page_title({
+    Client.get_page_title({
       url: piece.url
     })
       .done(function(data){
