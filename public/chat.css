@@ -12,15 +12,6 @@ ul {
   padding: 0;
 }
 
-.member_login {
-  color: #000000;
-  font-weight: 500;
-}
-
-.member_logout {
-  color: #888888;
-}
-
 .color_select_color {
   margin: 2px;
   font-size: large;
