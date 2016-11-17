@@ -9,13 +9,13 @@ var Chat = function(){
   self.type = null;
   self.color = "000000";
   self.load_member_timer = null;
-
+  self.client = new Client();
 };
 
 Chat.prototype.init = function(){
   var self = this;
 
-  Client.enter_room()
+  self.client.enter_room()
     .done(function(){
       self.load_init();
     });
@@ -24,7 +24,7 @@ Chat.prototype.init = function(){
 Chat.prototype.load_init = function(){
   var self = this;
 
-  Client.load_init()
+  self.client.load_init()
     .done(function(data){
       self.latest_id = data.list[0].message_id;
       self.type = data.list[0].chat_id;
@@ -52,7 +52,7 @@ Chat.prototype.exec_login = function(){
   var id = $("#login_id").val();
   var password = $("#login_password").val();
   $.cookie("login_id", id, { expires: 360});
-  Client.login({
+  self.client.login({
     id: id,
     password: password
   })
@@ -69,7 +69,7 @@ Chat.prototype.exec_login = function(){
 Chat.prototype.exec_logout = function(){
   var self = this;
 
-  Client.logout()
+  self.client.logout()
     .done(function(data){
       self.login_to_logout();
     });
@@ -78,7 +78,7 @@ Chat.prototype.exec_logout = function(){
 Chat.prototype.load_member = function(){
   var self = this;
 
-  Client.load_member()
+  self.client.load_member()
     .done(function(data){
       self.write_members(data.list);
     });
@@ -87,7 +87,7 @@ Chat.prototype.load_member = function(){
 Chat.prototype.load_latest = function(){
   var self = this;
 
-  Client.load_latest({
+  self.client.load_latest({
     latest_id: self.latest_id,
     type: self.type
   })
@@ -116,7 +116,7 @@ Chat.prototype.write_messages = function(messages, prev){
   var self = this;
 
   messages.forEach(function(obj){
-    var message = new Message(obj);
+    var message = new Message(obj, self.client);
     prev ? self.messages.unshift(message) : self.messages.push(message);
   });
 };
@@ -154,31 +154,35 @@ Chat.prototype.create_message = function(){
   var message = $("#message").val();
   if(message.length <= 0){ return; }
   $("#message").val("");
-  Client.create_message({
+  self.client.create_message({
     color: self.color,
     message: message
   });
 };
 
 Chat.prototype.change_status = function(){
+  var self = this;
 
   var new_status = $("#status").val();
-  Client.change_status({
+  self.client.change_status({
     status: new_status
   });
 };
 
 Chat.prototype.create_judge = function(){
+  var self = this;
+
   var judge = $("#judge").val();
   if(judge.length <= 0){ return; }
   $("#judge").val("");
-  Client.create_judge({
+  self.client.create_judge({
     message: judge
   });
 };
 
 Chat.prototype.create_auto = function(){
-  Client.create_auto();
+  var self = this;
+  self.client.create_auto();
 };
 
 Chat.prototype.set_color_form = function(current_color){

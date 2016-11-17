@@ -1,4 +1,4 @@
-var Message = function(data){
+var Message = function(data, client){
   var self = this;
   var regexp = /https?:\/\/[^\s]*/g;
   var urls = data.message_content.match(regexp);
@@ -14,7 +14,7 @@ var Message = function(data){
     if(urls && urls[i]){
       url = urls[i];
     }
-    self.message_pieces.push(new MessagePiece({ message: text, url: url }));
+    self.message_pieces.push(new MessagePiece({ message: text, url: url }, client));
   });
 
   self.quote = function(){
