@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>chat</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/css/bootstrap-select.min.css" integrity="sha256-6pWNO2Viaad+qrj8CQ4U9iYrylSPRgLOzaHGtCba1f4=" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js" integrity="sha256-PX9zWVaICUCeklczWaS9DLBb9uGN7pCkCT0Kyz1elRo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha256-1A78rJEdiWTzco6qdn3igTBv9VupN3Q1ozZNTR4WE/Y=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/js/bootstrap-select.js" integrity="sha256-dFfP5RZ7ym471T/9emS5lRl0kUFWladMOtMIKu9cr+U=" crossorigin="anonymous"></script>
     <script src="./client.js"></script>
     <script src="./message.js"></script>
     <script src="./message_piece.js"></script>
@@ -74,7 +76,19 @@
               <input type="submit" value="Judge" class="btn btn-danger">
             </div>
           </form>
-          <div class="col-md-2" id="color_select">
+          <div class="col-md-2">
+            <select class="selectpicker" data-bind="value: color, event: { change: change_color }" id="color_select">
+              <option value="000000" data-content="<span class='color_select' style='background-color: #000000;' >Black</span>"></option>
+              <option value="808080" data-content="<span class='color_select' style='background-color: #808080;' >Gray</span>"></option>
+              <option value="800000" data-content="<span class='color_select' style='background-color: #800000;' >Brown</span>"></option>
+              <option value="808000" data-content="<span class='color_select' style='background-color: #808000;' >Gold</span>"></option>
+              <option value="008000" data-content="<span class='color_select' style='background-color: #008000;' >Green</span>"></option>
+              <option value="008080" data-content="<span class='color_select' style='background-color: #008080;' >Light Blue</span>"></option>
+              <option value="000080" data-content="<span class='color_select' style='background-color: #000080;' >Blue</span>"></option>
+              <option value="800080" data-content="<span class='color_select' style='background-color: #800080;' >Purple</span>"></option>
+              <option value="FF00FF" data-content="<span class='color_select' style='background-color: #FF00FF;' >Pink</span>"></option>
+              <option value="FF6600" data-content="<span class='color_select' style='background-color: #FF6600;' >Orange</span>"></option>
+            </select>
           </div>
           <div class="col-md-4" id="api_status">
           </div>

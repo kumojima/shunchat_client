@@ -12,21 +12,14 @@ ul {
   padding: 0;
 }
 
-.color_select_color {
-  margin: 2px;
-  font-size: large;
-  cursor: pointer;
-}
-
-.color_select_color:hover {
-  background: #333333;
-}
-
-.selected {
-  background: #333333;
-}
-
 .quote_button {
   color: #3c763d;
   cursor: pointer;
+}
+
+.color_select {
+  display: block;
+  width: inherit;
+  text-align: center;
+  color: #FFFFFF;
 }

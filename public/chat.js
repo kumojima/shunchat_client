@@ -4,10 +4,10 @@ var Chat = function(){
   self.messages = ko.observableArray([]);
   self.members = ko.observableArray([]);
   self.login = ko.observable(true);
+  self.color = ko.observable("000000");
 
   self.latest_id = null;
   self.type = null;
-  self.color = "000000";
   self.load_member_timer = null;
   self.client = new Client({
     login_failed_callback: function(){
@@ -151,7 +151,7 @@ Chat.prototype.create_message = function(){
   if(message.length <= 0){ return; }
   $("#message").val("");
   self.client.create_message({
-    color: self.color,
+    color: self.color(),
     message: message
   });
 };
@@ -181,35 +181,20 @@ Chat.prototype.create_auto = function(){
   self.client.create_auto();
 };
 
-Chat.prototype.set_color_form = function(current_color){
-  var self = this;
-
-  var div = $("#color_select");
-  var colors = ["000000", "808080", "800000", "808000", "008000", "008080", "000080", "800080", "FF00FF", "FF6600"];
-  self.color = current_color;
-  colors.forEach(function(color){
-    var span = $("<span></span>", {
-      css: { color: "#" + color },
-      addClass: "color_select_color" + (color == current_color ? " selected" : ""),
-      on: {
-        click: function(){
-          self.color = color;
-          $.cookie("color", color, { expires: 360 });
-          $(this).nextAll().removeClass("selected");
-          $(this).prevAll().removeClass("selected");
-          $(this).addClass("selected");
-        }
-      }
-    });
-    span.text("■");
-    div.append(span);
-  });
+Chat.prototype.change_color = function(){
+  $.cookie("color", this.color(), { expires: 360 });
 };
 
 $(document).ready(function(){
   var chat = new Chat();
   ko.applyBindings(chat);
-  chat.set_color_form($.cookie("color"));
+  var color = $.cookie("color");
+  if(color){
+    chat.color(color);
+    var select = $("#select_color");
+    select.val(color);
+    select.selectpicker("refresh");
+  }
   $("#login_id").val($.cookie("login_id"));
   chat.init();
 });
