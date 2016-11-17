@@ -35,19 +35,15 @@ Chat.prototype.load_init = function(){
       self.write_messages(data.list);
       self.set_title(data.list);
       self.load_member();
-      self.load_member_timer = setInterval(function(){ self.load_member() }, 5000);
+      self.load_member_timer = setInterval(function(){
+        if(self.login()){
+          self.load_member();
+        }else{
+          clearInterval(self.load_member_timer);
+        }
+      }, 5000);
       self.load_latest();
     });
-};
-
-Chat.prototype.login_to_logout = function(){
-  var self = this;
-
-  document.title = "chat";
-  if(self.load_member_timer){
-    clearInterval(self.load_member_timer);
-    self.load_member_timer = null;
-  }
 };
 
 Chat.prototype.exec_login = function(){
@@ -72,10 +68,7 @@ Chat.prototype.exec_login = function(){
 Chat.prototype.exec_logout = function(){
   var self = this;
 
-  self.client.logout()
-    .done(function(data){
-      self.login_to_logout();
-    });
+  self.client.logout();
 };
 
 Chat.prototype.load_member = function(){
