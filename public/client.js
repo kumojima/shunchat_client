@@ -10,14 +10,10 @@ var Client = function(obj){
  * obj.password: パスワード
  */
 Client.prototype.login = function(obj){
-  return $.post({
-    url: "/proxy",
-    data: {
-      path: "/auth",
-      method: "post",
-      data: { command: "login", mail: obj.id, pass: obj.password }
-    },
-    dataType: "json"
+  return this.post_proxy({
+    path: "/auth",
+    method: "post",
+    data: { command: "login", mail: obj.id, pass: obj.password }
   });
 };
 
@@ -183,8 +179,7 @@ Client.prototype.post_proxy = function(obj){
         return Promise.reject(data);
       }
       if(!data.inroom){
-        Client.enter_room();
-        return Promise.reject(data);
+        return self.enter_room();
       }
       return Promise.resolve(data);
     })

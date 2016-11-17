@@ -60,13 +60,12 @@ Chat.prototype.exec_login = function(){
     id: id,
     password: password
   })
-    .done(function(data){
-      if(data.success){
-        self.login(true);
-        self.init();
-      }else{
-        $("#login_form_message").text("ログインに失敗しました");
-      }
+    .then(function(data){
+      self.login(true);
+      self.init();
+    })
+    .fail(function(data){
+      $("#login_form_message").text("ログインに失敗しました");
     });
 };
 
