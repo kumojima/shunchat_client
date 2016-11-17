@@ -1,4 +1,8 @@
-var Client = function(){};
+var Client = function(obj){
+  var self = this;
+
+  self.login_failed_callback = obj.login_failed_callback;
+};
 
 /*
  * ログイン
@@ -152,6 +156,7 @@ Client.prototype.get_page_title = function(obj){
  * obj.data: POSTパラメータ
  */
 Client.prototype.post_proxy = function(obj){
+  var self = this;
   var date = new Date().toLocaleString();
   var api_status = $("#api_status");
   return $.post({
@@ -171,7 +176,7 @@ Client.prototype.post_proxy = function(obj){
       api_status.append(message);
       api_status.effect("highlight", {}, 1500);
       if(!data.login){
-        chat.login(false);
+        self.login_failed_callback();
         return Promise.reject(data);
       }
       if(!data.success){

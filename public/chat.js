@@ -9,7 +9,11 @@ var Chat = function(){
   self.type = null;
   self.color = "000000";
   self.load_member_timer = null;
-  self.client = new Client();
+  self.client = new Client({
+    login_failed_callback: function(){
+      self.login(false);
+    }
+  });
 };
 
 Chat.prototype.init = function(){
@@ -211,7 +215,7 @@ Chat.prototype.set_color_form = function(current_color){
 };
 
 $(document).ready(function(){
-  chat = new Chat();
+  var chat = new Chat();
   ko.applyBindings(chat);
   chat.set_color_form($.cookie("color"));
   $("#login_id").val($.cookie("login_id"));
