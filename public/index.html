@@ -40,42 +40,38 @@
       </div>
       <div data-bind="visible: login()">
         <div class="row">
-          <form data-bind="submit: create_message">
-            <div class="col-md-5">
-              <input type="text" name="" id="message" class="form-control">
-            </div>
-            <div class="col-md-1">
-              <input type="submit" value="発言" class="btn btn-primary">
-            </div>
-          </form>
-          <form data-bind="submit: change_status">
-            <div class="col-md-2">
-              <input type="text" name="" id="status" class="form-control">
-            </div>
-            <div class="col-md-1">
-              <input type="submit" value="状態" class="btn btn-success">
-            </div>
-          </form>
-          <div class="col-md-2">
-            <form data-bind="submit: create_auto">
-              <input type="submit" value="○∈" class="btn btn-default">
+          <div class="col-md-6">
+            <form data-bind="submit: create_message">
+              <div class="input-group">
+                <input type="text" name="" id="message" class="form-control">
+                <span class="input-group-btn">
+                  <input type="submit" value="発言" class="btn btn-primary">
+                </span>
+              </div>
             </form>
           </div>
-          <div class="col-md-1">
-            <form data-bind="submit: exec_logout">
-              <input type="submit" value="Logout" class="btn btn-warning">
+          <div class="col-md-6">
+            <form data-bind="submit: create_judge">
+              <div class="input-group">
+                <input type="text" name="" id="judge" class="form-control">
+                <span class="input-group-btn">
+                  <input type="submit" value="Judge" class="btn btn-danger">
+                </span>
+              </div>
             </form>
           </div>
         </div>
         <div class="row">
-          <form data-bind="submit: create_judge">
-            <div class="col-md-5">
-              <input type="text" name="" id="judge" class="form-control">
-            </div>
-            <div class="col-md-1">
-              <input type="submit" value="Judge" class="btn btn-danger">
-            </div>
-          </form>
+          <div class="col-md-6">
+            <form data-bind="submit: change_status">
+              <div class="input-group">
+                <input type="text" name="" id="status" class="form-control">
+                <span class="input-group-btn">
+                  <input type="submit" value="状態" class="btn btn-success">
+                </span>
+              </div>
+            </form>
+          </div>
           <div class="col-md-2">
             <select class="selectpicker" data-bind="value: color, event: { change: change_color }" id="color_select">
               <option value="000000" data-content="<span class='color_select' style='background-color: #000000;' >Black</span>"></option>
@@ -90,7 +86,15 @@
               <option value="FF6600" data-content="<span class='color_select' style='background-color: #FF6600;' >Orange</span>"></option>
             </select>
           </div>
-          <div class="col-md-4" id="api_status">
+          <div class="col-md-2" id="api_status">
+          </div>
+          <div class="col-md-2 form-inline">
+            <form data-bind="submit: create_auto" class="button_only_form">
+              <input type="submit" value="○∈" class="btn btn-default">
+            </form>
+            <form data-bind="submit: exec_logout" class="button_only_form">
+              <input type="submit" value="Logout" class="btn btn-warning">
+            </form>
           </div>
         </div>
         <div class="row">
