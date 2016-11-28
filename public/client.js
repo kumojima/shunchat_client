@@ -153,7 +153,7 @@ Client.prototype.search_message = function(obj){
   return this.post_proxy({
     path: "/chat",
     method: "post",
-    data: { target: "message", command: "load", query: obj.query }
+    data: { target: "message", command: "load", query: obj.query, reverse: true }
   });
 };
 
@@ -174,7 +174,8 @@ Client.prototype.load_log = function(obj){
       target: "message",
       command: "load",
       posted_from: posted_from,
-      posted_to: posted_to
+      posted_to: posted_to,
+      reverse: true
     }
   });
 };
