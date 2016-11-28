@@ -199,6 +199,14 @@ Chat.prototype.search_message = function(){
 };
 
 Chat.prototype.load_log = function(){
+  var self = this;
+  self.log_messages.destroyAll();
+  var date = $("#log_date").val();
+  if(date.length <= 0){ return; }
+  self.client.load_log({ date: date })
+    .then(function(data){
+      self.write_messages(self.log_messages, data.list);
+    });
 };
 
 $(document).ready(function(){
@@ -212,5 +220,9 @@ $(document).ready(function(){
     select.selectpicker("refresh");
   }
   $("#login_id").val($.cookie("login_id"));
+  $(".datepicker").datepicker({
+    dateFormat: "yy-mm-dd",
+    maxDate: "0y"
+  });
   chat.init();
 });

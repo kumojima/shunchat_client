@@ -158,6 +158,28 @@ Client.prototype.search_message = function(obj){
 };
 
 /*
+ * ログ読み込み
+ * obj.date: 日付(YYYY-MM-DD)
+ */
+Client.prototype.load_log = function(obj){
+  var d1 = new Date(obj.date);
+  var d2 = new Date(obj.date);
+  d2.setDate(d2.getDate() + 1);
+  var posted_from = (d1.getFullYear() % 1000) + "/" + (d1.getMonth() + 1) + "/" + d1.getDate() + " 00:00:00";
+  var posted_to = (d2.getFullYear() % 1000) + "/" + (d2.getMonth() + 1) + "/" + d2.getDate() + " 00:00:00";
+  return this.post_proxy({
+    path: "/chat",
+    method: "post",
+    data: {
+      target: "message",
+      command: "load",
+      posted_from: posted_from,
+      posted_to: posted_to
+    }
+  });
+};
+
+/*
  * プロキシへのアクセス
  * obj.path: アクセス先のパス
  * obj.method: HTTPメソッド
