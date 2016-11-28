@@ -2,6 +2,8 @@ var Chat = function(){
   var self = this;
 
   self.messages = ko.observableArray([]);
+  self.search_messages = ko.observableArray([]);
+  self.log_messages = ko.observableArray([]);
   self.members = ko.observableArray([]);
   self.login = ko.observable(true);
   self.color = ko.observable("000000");
@@ -32,7 +34,7 @@ Chat.prototype.load_init = function(){
     .done(function(data){
       self.latest_id = data.list[0].message_id;
       self.type = data.list[0].chat_id;
-      self.write_messages(data.list);
+      self.write_messages(self.messages, data.list);
       self.set_title(data.list);
       self.load_member();
       self.load_member_timer = setInterval(function(){
@@ -92,7 +94,7 @@ Chat.prototype.load_latest = function(){
       if(data.list.length > 0){
         self.latest_id = data.list[0].message_id;
         self.type = data.list[0].chat_id;
-        self.write_messages(data.list, true);
+        self.write_messages(self.messages, data.list, true);
         self.set_title(data.list.reverse());
       }
     })
@@ -108,12 +110,12 @@ Chat.prototype.load_latest = function(){
  * messages: レスポンスのlistオブジェクト
  * prev: trueならprepend, falseならappend(デフォルト)
  */
-Chat.prototype.write_messages = function(messages, prev){
+Chat.prototype.write_messages = function(arr, messages, prev){
   var self = this;
 
   messages.forEach(function(obj){
     var message = new Message(obj, self.client);
-    prev ? self.messages.unshift(message) : self.messages.push(message);
+    prev ? arr.unshift(message) : arr.push(message);
   });
 };
 
@@ -183,6 +185,20 @@ Chat.prototype.create_auto = function(){
 
 Chat.prototype.change_color = function(){
   $.cookie("color", this.color(), { expires: 360 });
+};
+
+Chat.prototype.search_message = function(){
+  var self = this;
+  self.search_messages.destroyAll();
+  var query = $("#search_query").val();
+  if(query.length <= 0){ return; }
+  self.client.search_message({ query: query })
+    .then(function(data){
+      self.write_messages(self.search_messages, data.list);
+    });
+};
+
+Chat.prototype.load_log = function(){
 };
 
 $(document).ready(function(){

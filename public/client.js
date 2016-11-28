@@ -146,6 +146,18 @@ Client.prototype.get_page_title = function(obj){
 };
 
 /*
+ * メッセージ検索
+ * obj.query: クエリ
+ */
+Client.prototype.search_message = function(obj){
+  return this.post_proxy({
+    path: "/chat",
+    method: "post",
+    data: { target: "message", command: "load", query: obj.query }
+  });
+};
+
+/*
  * プロキシへのアクセス
  * obj.path: アクセス先のパス
  * obj.method: HTTPメソッド

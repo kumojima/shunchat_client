@@ -21,6 +21,23 @@
     <link href="./chat.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <script type="text/html" id="messages_template">
+      <li>
+        <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: quote"></span>
+        <span data-bind="text: posted_at"></span>
+        <span data-bind="style: { color: message_color }">
+          <span data-bind="text: name"></span>
+          --&gt;
+          <span data-bind="foreach: { data: message_pieces, as: 'piece' }">
+            <span data-bind="text: piece.message"></span>
+            <a data-bind="attr: piece.a_attrs, visible: piece.url">
+              <img data-bind="attr: piece.img_attrs" />
+              <span data-bind="text: piece.title"></span>
+            </a>
+          </span>
+        </span>
+      </li>
+    </script>
     <div class="container-fluid">
       <div class="row" data-bind="visible: !login()">
         <div class="col-lg-12">
@@ -112,22 +129,7 @@
             </div>
             <div class="row">
               <div class="col-md-9">
-                <ul data-bind="foreach: { data: messages, as: 'message' }">
-                  <li>
-                    <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: message.quote"></span>
-                    <span data-bind="text: message.posted_at"></span>
-                    <span data-bind="style: { color: message.message_color }">
-                      <span data-bind="text: message.name"></span>
-                      --&gt;
-                      <span data-bind="foreach: { data:message.message_pieces, as: 'piece' }">
-                        <span data-bind="text: piece.message"></span>
-                        <a data-bind="attr: piece.a_attrs, visible: piece.url">
-                          <img data-bind="attr: piece.img_attrs" />
-                          <span data-bind="text: piece.title"></span>
-                        </a>
-                      </span>
-                    </span>
-                  </li>
+                <ul data-bind="template: { name: 'messages_template', foreach: messages }">
                 </ul>
               </div>
               <div class="col-md-3">
@@ -143,9 +145,9 @@
           <div id="tab_search" class="tab-pane">
             <div class="row">
               <div class="col-lg-12">
-                <form>
+                <form data-bind="submit: search_message">
                   <div class="input-group">
-                    <input type="text" id="search" class="form-control">
+                    <input type="text" id="search_query" class="form-control">
                     <span class="input-group-btn">
                       <input type="submit" value="検索" class="btn btn-primary">
                     </span>
@@ -153,11 +155,17 @@
                 </form>
               </div>
             </div>
+            <div class="row">
+              <div class="col-md-12">
+                <ul data-bind="template: { name: 'messages_template', foreach: search_messages }">
+                </ul>
+              </div>
+            </div>
           </div><!-- /tab_search -->
           <div id="tab_log" class="tab-pane">
             <div class="row">
               <div class="col-lg-12">
-                <form>
+                <form data-bind="submit: load_log">
                   <div class="input-group">
                     <input type="text" id="log" class="form-control">
                     <span class="input-group-btn">
@@ -165,6 +173,12 @@
                     </span>
                   </div>
                 </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <ul data-bind="template: { name: 'messages_template', foreach: log_messages }">
+                </ul>
               </div>
             </div>
           </div><!-- /tab_log -->
