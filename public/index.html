@@ -39,93 +39,114 @@
         </div>
       </div>
       <div data-bind="visible: login()">
-        <div class="row">
-          <div class="col-md-6">
-            <form data-bind="submit: create_message">
-              <div class="input-group">
-                <input type="text" name="" id="message" class="form-control">
-                <span class="input-group-btn">
-                  <input type="submit" value="発言" class="btn btn-primary">
-                </span>
+        <ul class="nav nav-tabs">
+          <li class="nav-item active">
+            <a href="#tab_chat" class="nav-link" data-toggle="tab">chat</a>
+          </li>
+          <li class="nav-item">
+            <a href="#tab_search" class="nav-link" data-toggle="tab">search</a>
+          </li>
+          <li class="nav-item">
+            <a href="#tab_log" class="nav-link" data-toggle="tab">log</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div id="tab_chat" class="tab-pane active">
+            <div class="row">
+              <div class="col-md-6">
+                <form data-bind="submit: create_message">
+                  <div class="input-group">
+                    <input type="text" name="" id="message" class="form-control">
+                    <span class="input-group-btn">
+                      <input type="submit" value="発言" class="btn btn-primary">
+                    </span>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-          <div class="col-md-6">
-            <form data-bind="submit: create_judge">
-              <div class="input-group">
-                <input type="text" name="" id="judge" class="form-control">
-                <span class="input-group-btn">
-                  <input type="submit" value="Judge" class="btn btn-danger">
-                </span>
+              <div class="col-md-6">
+                <form data-bind="submit: create_judge">
+                  <div class="input-group">
+                    <input type="text" name="" id="judge" class="form-control">
+                    <span class="input-group-btn">
+                      <input type="submit" value="Judge" class="btn btn-danger">
+                    </span>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <form data-bind="submit: change_status">
-              <div class="input-group">
-                <input type="text" name="" id="status" class="form-control">
-                <span class="input-group-btn">
-                  <input type="submit" value="状態" class="btn btn-success">
-                </span>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <form data-bind="submit: change_status">
+                  <div class="input-group">
+                    <input type="text" name="" id="status" class="form-control">
+                    <span class="input-group-btn">
+                      <input type="submit" value="状態" class="btn btn-success">
+                    </span>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-          <div class="col-md-2">
-            <select class="selectpicker" data-bind="value: color, event: { change: change_color }" id="color_select">
-              <option value="000000" data-content="<span class='color_select' style='background-color: #000000;' >Black</span>"></option>
-              <option value="808080" data-content="<span class='color_select' style='background-color: #808080;' >Gray</span>"></option>
-              <option value="800000" data-content="<span class='color_select' style='background-color: #800000;' >Brown</span>"></option>
-              <option value="808000" data-content="<span class='color_select' style='background-color: #808000;' >Gold</span>"></option>
-              <option value="008000" data-content="<span class='color_select' style='background-color: #008000;' >Green</span>"></option>
-              <option value="008080" data-content="<span class='color_select' style='background-color: #008080;' >Light Blue</span>"></option>
-              <option value="000080" data-content="<span class='color_select' style='background-color: #000080;' >Blue</span>"></option>
-              <option value="800080" data-content="<span class='color_select' style='background-color: #800080;' >Purple</span>"></option>
-              <option value="FF00FF" data-content="<span class='color_select' style='background-color: #FF00FF;' >Pink</span>"></option>
-              <option value="FF6600" data-content="<span class='color_select' style='background-color: #FF6600;' >Orange</span>"></option>
-            </select>
-          </div>
-          <div class="col-md-2" id="api_status">
-          </div>
-          <div class="col-md-2 form-inline">
-            <form data-bind="submit: create_auto" class="button_only_form">
-              <input type="submit" value="○∈" class="btn btn-default">
-            </form>
-            <form data-bind="submit: exec_logout" class="button_only_form">
-              <input type="submit" value="Logout" class="btn btn-warning">
-            </form>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-9">
-            <ul data-bind="foreach: { data: messages, as: 'message' }">
-              <li>
-                <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: message.quote"></span>
-                <span data-bind="text: message.posted_at"></span>
-                <span data-bind="style: { color: message.message_color }">
-                  <span data-bind="text: message.name"></span>
-                  --&gt;
-                  <span data-bind="foreach: { data:message.message_pieces, as: 'piece' }">
-                    <span data-bind="text: piece.message"></span>
-                    <a data-bind="attr: piece.a_attrs, visible: piece.url">
-                      <img data-bind="attr: piece.img_attrs" />
-                      <span data-bind="text: piece.title"></span>
-                    </a>
-                  </span>
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-3">
-            <ul class="list-group" data-bind="foreach: members">
-              <li class="list-group-item" data-bind="css: member_style">
-                <h4 class="list-group-item-heading" data-bind="text: name"></h4>
-                <p class="list-item-group-text" data-bind="text: status"></p>
-              </li>
-            </ul>
-          </div>
-        </div>
+              <div class="col-md-2">
+                <select class="selectpicker" data-bind="value: color, event: { change: change_color }" id="color_select">
+                  <option value="000000" data-content="<span class='color_select' style='background-color: #000000;' >Black</span>"></option>
+                  <option value="808080" data-content="<span class='color_select' style='background-color: #808080;' >Gray</span>"></option>
+                  <option value="800000" data-content="<span class='color_select' style='background-color: #800000;' >Brown</span>"></option>
+                  <option value="808000" data-content="<span class='color_select' style='background-color: #808000;' >Gold</span>"></option>
+                  <option value="008000" data-content="<span class='color_select' style='background-color: #008000;' >Green</span>"></option>
+                  <option value="008080" data-content="<span class='color_select' style='background-color: #008080;' >Light Blue</span>"></option>
+                  <option value="000080" data-content="<span class='color_select' style='background-color: #000080;' >Blue</span>"></option>
+                  <option value="800080" data-content="<span class='color_select' style='background-color: #800080;' >Purple</span>"></option>
+                  <option value="FF00FF" data-content="<span class='color_select' style='background-color: #FF00FF;' >Pink</span>"></option>
+                  <option value="FF6600" data-content="<span class='color_select' style='background-color: #FF6600;' >Orange</span>"></option>
+                </select>
+              </div>
+              <div class="col-md-2" id="api_status">
+              </div>
+              <div class="col-md-2 form-inline">
+                <form data-bind="submit: create_auto" class="button_only_form">
+                  <input type="submit" value="○∈" class="btn btn-default">
+                </form>
+                <form data-bind="submit: exec_logout" class="button_only_form">
+                  <input type="submit" value="Logout" class="btn btn-warning">
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-9">
+                <ul data-bind="foreach: { data: messages, as: 'message' }">
+                  <li>
+                    <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: message.quote"></span>
+                    <span data-bind="text: message.posted_at"></span>
+                    <span data-bind="style: { color: message.message_color }">
+                      <span data-bind="text: message.name"></span>
+                      --&gt;
+                      <span data-bind="foreach: { data:message.message_pieces, as: 'piece' }">
+                        <span data-bind="text: piece.message"></span>
+                        <a data-bind="attr: piece.a_attrs, visible: piece.url">
+                          <img data-bind="attr: piece.img_attrs" />
+                          <span data-bind="text: piece.title"></span>
+                        </a>
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-3">
+                <ul class="list-group" data-bind="foreach: members">
+                  <li class="list-group-item" data-bind="css: member_style">
+                    <h4 class="list-group-item-heading" data-bind="text: name"></h4>
+                    <p class="list-item-group-text" data-bind="text: status"></p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div><!-- /tab_chat -->
+          <div id="tab_search" class="tab-pane">
+            search
+          </div><!-- /tab_search -->
+          <div id="tab_log" class="tab-pane">
+            log
+          </div><!-- /tab_log -->
+        </div><!-- /tab-content -->
       </div>
     </div>
   </body>
