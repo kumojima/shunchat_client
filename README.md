@@ -4,7 +4,7 @@ shun chat client
 
 # Language
 
-ruby 2.3.1
+ruby 2.3
 
 # Usage
 
