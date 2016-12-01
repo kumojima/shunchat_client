@@ -40,6 +40,17 @@ Client.prototype.enter_room = function(){
 };
 
 /*
+ * 退室
+ */
+Client.prototype.exit_room = function(){
+  return this.post_proxy({
+    path: "/chat",
+    method: "post",
+    data: { target: "room", command: "exit" }
+  });
+};
+
+/*
  * 初回読み込み
  */
 Client.prototype.load_init = function(obj){
@@ -212,9 +223,6 @@ Client.prototype.post_proxy = function(obj){
       }
       if(!data.success){
         return Promise.reject(data);
-      }
-      if(!data.inroom){
-        return self.enter_room();
       }
       return Promise.resolve(data);
     })

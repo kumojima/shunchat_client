@@ -59,8 +59,11 @@ Chat.prototype.exec_login = function(){
     password: password
   })
     .then(function(data){
-      self.login(true);
-      self.init();
+      self.client.enter_room()
+        .then(function(){
+          self.login(true);
+          self.init();
+        });
     })
     .fail(function(data){
       $("#login_form_message").text("ログインに失敗しました");
@@ -70,7 +73,10 @@ Chat.prototype.exec_login = function(){
 Chat.prototype.exec_logout = function(){
   var self = this;
 
-  self.client.logout();
+  self.client.exit_room()
+    .then(function(data){
+      self.client.logout();
+    });
 };
 
 Chat.prototype.load_member = function(){
