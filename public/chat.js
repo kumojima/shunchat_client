@@ -1,6 +1,9 @@
 var Chat = function(){
   var self = this;
 
+  self.read_mark = "* ";
+  self.window_active = true;
+
   self.messages = ko.observableArray([]);
   self.search_messages = ko.observableArray([]);
   self.log_messages = ko.observableArray([]);
@@ -135,7 +138,20 @@ Chat.prototype.set_title = function(messages){
   if(messages.length <= 0){ return; }
   var message = messages[0];
   var title = "(" + message.name + ")" + message.message_content;
+  if(!self.window_active){
+    title = self.read_mark + title;
+  }
   document.title = title;
+};
+
+/*
+ * 既読処理
+ */
+Chat.prototype.remove_read_mark = function(){
+  var title = document.title;
+  if(title.indexOf(this.read_mark) == 0){
+    document.title = title.substr(this.read_mark.length);
+  }
 };
 
 /*
@@ -230,5 +246,12 @@ $(document).ready(function(){
     dateFormat: "yy-mm-dd",
     maxDate: "0y"
   });
+  window.onfocus = function(){
+    chat.window_active = true;
+    chat.remove_read_mark();
+  }
+  window.onblur = function(){
+    chat.window_active = false;
+  }
   chat.init();
 });
