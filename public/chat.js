@@ -10,7 +10,7 @@ var Chat = function(){
   self.members = ko.observableArray([]);
   self.login = ko.observable(true);
   self.color = ko.observable("000000");
-  self.notice_sound = true;
+  self.notice_sound = ko.observable(false);
   self.notice_sound_source = document.getElementById("sound_notice");
 
   self.latest_id = null;
@@ -237,12 +237,16 @@ Chat.prototype.load_log = function(){
 Chat.prototype.play_notice_sound = function(messages, myname){
   var regexp = RegExp("@" + myname);
   var self = this;
-  if(!self.notice_sound){ return; }
+  if(!self.notice_sound()){ return; }
   messages.forEach(function(message){
     if(message.message_content.match(regexp)){
       self.notice_sound_source.play();
     }
   });
+};
+
+Chat.prototype.change_notice_sound = function(){
+  $.cookie("notice_sound", this.notice_sound(), { expires: 360 });
 };
 
 $(document).ready(function(){
@@ -255,6 +259,7 @@ $(document).ready(function(){
     select.val(color);
     select.selectpicker("refresh");
   }
+  chat.notice_sound($.cookie("notice_sound") == "true");
   $("#login_id").val($.cookie("login_id"));
   $(".datepicker").datepicker({
     dateFormat: "yy-mm-dd",
