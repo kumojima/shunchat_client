@@ -10,6 +10,8 @@ var Chat = function(){
   self.members = ko.observableArray([]);
   self.login = ko.observable(true);
   self.color = ko.observable("000000");
+  self.notice_sound = true;
+  self.notice_sound_source = document.getElementById("sound_notice");
 
   self.latest_id = null;
   self.type = null;
@@ -105,6 +107,7 @@ Chat.prototype.load_latest = function(){
         self.type = data.list[0].chat_id;
         self.write_messages(self.messages, data.list, true);
         self.set_title(data.list.reverse());
+        self.play_notice_sound(data.list, data.name)
       }
     })
     .always(function(data){
@@ -229,6 +232,17 @@ Chat.prototype.load_log = function(){
     .then(function(data){
       self.write_messages(self.log_messages, data.list);
     });
+};
+
+Chat.prototype.play_notice_sound = function(messages, myname){
+  var regexp = RegExp("@" + myname);
+  var self = this;
+  if(!self.notice_sound){ return; }
+  messages.forEach(function(message){
+    if(message.message_content.match(regexp)){
+      self.notice_sound_source.play();
+    }
+  });
 };
 
 $(document).ready(function(){

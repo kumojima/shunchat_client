@@ -22,6 +22,10 @@
     <link href="./chat.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <audio preload="auto" id="sound_notice">
+      <source src="./notice.mp3" type="audio/mp3">
+      <source src="./notice.ogg" type="audio/ogg">
+    </audio>
     <script type="text/html" id="messages_template">
       <li>
         <span class="glyphicon glyphicon-share-alt quote_button" data-bind="click: quote"></span>
