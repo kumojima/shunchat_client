@@ -10,7 +10,7 @@ var Client = function(obj){
  * obj.password: パスワード
  */
 Client.prototype.login = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/auth",
     method: "post",
     data: { command: "login", mail: obj.id, pass: obj.password }
@@ -21,7 +21,7 @@ Client.prototype.login = function(obj){
  * ログアウト
  */
 Client.prototype.logout = function(){
-  return this.post_proxy({
+  return this.send({
     path: "/auth",
     method: "post",
     data: { command: "logout" }
@@ -32,7 +32,7 @@ Client.prototype.logout = function(){
  * 入室
  */
 Client.prototype.enter_room = function(){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "room", command: "enter" }
@@ -43,7 +43,7 @@ Client.prototype.enter_room = function(){
  * 退室
  */
 Client.prototype.exit_room = function(){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "room", command: "exit" }
@@ -54,7 +54,7 @@ Client.prototype.exit_room = function(){
  * 初回読み込み
  */
 Client.prototype.load_init = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "message", command: "load", reverse: true }
@@ -67,7 +67,7 @@ Client.prototype.load_init = function(obj){
  * obj.type: チャット識別子
  */
 Client.prototype.load_latest = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: {
@@ -86,7 +86,7 @@ Client.prototype.load_latest = function(obj){
  * メンバー読み込み
  */
 Client.prototype.load_member = function(){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: {
@@ -102,7 +102,7 @@ Client.prototype.load_member = function(){
  * obj.message: 発言
  */
 Client.prototype.create_message = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "message", command: "post", color: obj.color, content: obj.message }
@@ -114,7 +114,7 @@ Client.prototype.create_message = function(obj){
  * obj.stauts: 状態
  */
 Client.prototype.change_status = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "member", command: "post", content: obj.status }
@@ -126,7 +126,7 @@ Client.prototype.change_status = function(obj){
  * obj.message: 発言
  */
 Client.prototype.create_judge = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "message", command: "judge", content: obj.message }
@@ -137,7 +137,7 @@ Client.prototype.create_judge = function(obj){
  * 自動
  */
 Client.prototype.create_auto = function(){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "message", command: "auto" }
@@ -161,7 +161,7 @@ Client.prototype.get_page_title = function(obj){
  * obj.query: クエリ
  */
 Client.prototype.search_message = function(obj){
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: { target: "message", command: "load", query: obj.query, reverse: true }
@@ -178,7 +178,7 @@ Client.prototype.load_log = function(obj){
   d2.setDate(d2.getDate() + 1);
   var posted_from = (d1.getFullYear() % 1000) + "/" + (d1.getMonth() + 1) + "/" + d1.getDate() + " 00:00:00";
   var posted_to = (d2.getFullYear() % 1000) + "/" + (d2.getMonth() + 1) + "/" + d2.getDate() + " 00:00:00";
-  return this.post_proxy({
+  return this.send({
     path: "/chat",
     method: "post",
     data: {
@@ -197,19 +197,20 @@ Client.prototype.load_log = function(obj){
  * obj.method: HTTPメソッド
  * obj.data: POSTパラメータ
  */
-Client.prototype.post_proxy = function(obj){
+Client.prototype.send = function(obj){
   var self = this;
   var date = new Date().toLocaleString();
   var api_status = $("#api_status");
-  return $.post({
-    url: "/proxy",
-    data: {
-      path: obj.path,
-      method: obj.method,
-      data: obj.data
-    },
+  var params = {
+    url: "http://chat.shun256.com" + obj.path,
+    data: obj.data,
     dataType: "json",
-  })
+    crossDomain: true,
+    xhrFields: {
+      withCredentials: true
+    }
+  };
+  return (obj.method == "get" ? $.get(params) : $.post(params))
     .then(function(data){
       var icon = $("<span></span>", { addClass: "glyphicon glyphicon-check text-success" });
       var message = " [OK] " + obj.path + " (" + date + ")";
