@@ -35,7 +35,7 @@
           --&gt;
           <span data-bind="foreach: { data: message_pieces, as: 'piece' }">
             <span data-bind="text: piece.message"></span>
-            <a data-bind="attr: piece.a_attrs, visible: piece.url">
+            <a data-bind="attr: piece.a_attrs, visible: piece.url" target="_blank">
               <img data-bind="attr: piece.img_attrs" />
               <span data-bind="text: piece.title"></span>
             </a>
