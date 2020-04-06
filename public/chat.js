@@ -15,7 +15,6 @@ var Chat = function(){
 
   self.latest_id = null;
   self.type = null;
-  self.load_member_timer = null;
   self.client = new Client({
     login_failed_callback: function(){
       self.login(false);
@@ -42,13 +41,6 @@ Chat.prototype.load_init = function(){
       self.write_messages(self.messages, data.list);
       self.set_title(data.list);
       self.load_member();
-      self.load_member_timer = setInterval(function(){
-        if(self.login()){
-          self.load_member();
-        }else{
-          clearInterval(self.load_member_timer);
-        }
-      }, 5000);
       self.load_latest();
     });
 };
@@ -90,6 +82,11 @@ Chat.prototype.load_member = function(){
   self.client.load_member()
     .done(function(data){
       self.write_members(data.list);
+    })
+    .always(function(data){
+      if(self.login()){
+        setTimeout(function(){ self.load_member() }, 5000);
+      }
     });
 };
 
