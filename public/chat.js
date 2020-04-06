@@ -102,7 +102,7 @@ Chat.prototype.load_latest = function(){
       if(data.list.length > 0){
         self.latest_id = data.list[0].message_id;
         self.type = data.list[0].chat_id;
-        self.write_messages(self.messages, data.list, true);
+        self.write_messages(self.messages, data.list.reverse(), true);
         self.set_title(data.list.reverse());
         self.play_notice_sound(data.list, data.name)
       }
