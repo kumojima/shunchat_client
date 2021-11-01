@@ -202,7 +202,7 @@ Client.prototype.send = function(obj){
   var date = new Date().toLocaleString();
   var api_status = $("#api_status");
   var params = {
-    url: "http://chat.shun256.com" + obj.path,
+    url: "https://shunchat.com" + obj.path,
     data: obj.data,
     dataType: "json",
     crossDomain: true,
