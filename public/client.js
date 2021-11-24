@@ -33,7 +33,7 @@ Client.prototype.logout = function(){
  */
 Client.prototype.enter_room = function(){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "room", command: "enter" }
   });
@@ -44,7 +44,7 @@ Client.prototype.enter_room = function(){
  */
 Client.prototype.exit_room = function(){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "room", command: "exit" }
   });
@@ -55,7 +55,7 @@ Client.prototype.exit_room = function(){
  */
 Client.prototype.load_init = function(obj){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "message", command: "load", reverse: true }
   });
@@ -68,7 +68,7 @@ Client.prototype.load_init = function(obj){
  */
 Client.prototype.load_latest = function(obj){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: {
       target: "message",
@@ -87,7 +87,7 @@ Client.prototype.load_latest = function(obj){
  */
 Client.prototype.load_member = function(){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: {
       target: "member",
@@ -103,7 +103,7 @@ Client.prototype.load_member = function(){
  */
 Client.prototype.create_message = function(obj){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "message", command: "post", color: obj.color, content: obj.message }
   });
@@ -115,7 +115,7 @@ Client.prototype.create_message = function(obj){
  */
 Client.prototype.change_status = function(obj){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "member", command: "post", content: obj.status }
   });
@@ -127,7 +127,7 @@ Client.prototype.change_status = function(obj){
  */
 Client.prototype.create_judge = function(obj){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "message", command: "judge", content: obj.message }
   });
@@ -138,7 +138,7 @@ Client.prototype.create_judge = function(obj){
  */
 Client.prototype.create_auto = function(){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "message", command: "auto" }
   });
@@ -162,7 +162,7 @@ Client.prototype.get_page_title = function(obj){
  */
 Client.prototype.search_message = function(obj){
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: { target: "message", command: "load", query: obj.query, reverse: true }
   });
@@ -179,7 +179,7 @@ Client.prototype.load_log = function(obj){
   var posted_from = (d1.getFullYear() % 1000) + "/" + (d1.getMonth() + 1) + "/" + d1.getDate() + " 00:00:00";
   var posted_to = (d2.getFullYear() % 1000) + "/" + (d2.getMonth() + 1) + "/" + d2.getDate() + " 00:00:00";
   return this.send({
-    path: "/chat",
+    path: "/shunchat",
     method: "post",
     data: {
       target: "message",
@@ -202,7 +202,7 @@ Client.prototype.send = function(obj){
   var date = new Date().toLocaleString();
   var api_status = $("#api_status");
   var params = {
-    url: "https://shunchat.com" + obj.path,
+    url: "https://shun.chat" + obj.path,
     data: obj.data,
     dataType: "json",
     crossDomain: true,
